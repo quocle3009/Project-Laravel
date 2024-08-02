@@ -18,7 +18,6 @@ class Task extends Model
     {
         return $this->belongsTo(Project::class);
     }
-
     public function getContentAttribute($value)
     {
         return Str::limit($value, 100);

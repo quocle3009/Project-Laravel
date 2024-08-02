@@ -13,6 +13,7 @@ class DeleteTaskTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
+
     public function authenticated_user_can_delete_task()
     {
         $user = User::factory()->create();
@@ -25,6 +26,7 @@ class DeleteTaskTest extends TestCase
         $response->assertStatus(200);
         // $response->assertRedirect('/tasks');
     }
+
 
 
     /** @test */

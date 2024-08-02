@@ -98,7 +98,4 @@ class TaskController extends Controller
             ->orderBy($sortColumn, $sortOrder)
             ->latest('id');
     }
-
-
-
 }
