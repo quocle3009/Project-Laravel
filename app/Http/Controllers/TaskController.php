@@ -10,6 +10,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+
 class TaskController extends Controller
 {
     protected $task;
@@ -41,7 +42,7 @@ class TaskController extends Controller
     public function store(TaskRequest $request)
     {
         Task::create($request->validated());
-    
+
         return response()->json(['success' => true]);
     }
 
@@ -67,6 +68,7 @@ class TaskController extends Controller
             return response()->json(['error' => 'An error occurred'], 500);
         }
     }
+
 
     public function search(Request $request)
     {
@@ -101,5 +103,7 @@ class TaskController extends Controller
             ->orderBy($sortColumn, $sortOrder)
             ->latest('id');
     }
+
+
 
 }
