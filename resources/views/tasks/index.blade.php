@@ -8,6 +8,7 @@
                     <button class="btn btn-primary" id="add-task-btn">Add Task</button>
                 </div>
 
+
                 <div class="col-md-6 d-flex justify-content-end align-items-center">  
                     <form id="filter-form" class="form-inline">  
                         <div class="input-group">  
@@ -60,7 +61,19 @@
                                 </a>
                             </th>
                             <th>Actions</th>
-                        </tr>
+
+    <div class="container">
+
+
+        <div class="row justify-content-center">
+            <table class="table table-striped">
+                <thead>
+                    <tr class="text-center">
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Content</th>
+                        <th>Actions</th>
+                     </tr>
                     </thead>
                     <tbody id="tasks-table-body">
                         @foreach ($tasks as $task)

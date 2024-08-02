@@ -24,6 +24,7 @@ class TaskController extends Controller
     // Trong TasksController.php hoặc controller tương ứng
     public function index(Request $request)
     {
+
         $projects = Project::all();
         $tasks = $this->task->latest('id')->paginate(10);
         return view('tasks.index', compact('tasks', 'projects'));
@@ -98,5 +99,6 @@ class TaskController extends Controller
             ->orderBy($sortColumn, $sortOrder)
             ->latest('id');
     }
+
 }
 
