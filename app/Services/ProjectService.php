@@ -1,4 +1,5 @@
-<?php
+<?php  
+
 namespace App\Services;  
 
 use App\Models\Project;  
@@ -9,4 +10,5 @@ class ProjectService
     {  
         return Project::all();  
     }  
-} 
+}  
+
