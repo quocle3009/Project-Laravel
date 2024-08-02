@@ -19,12 +19,18 @@ class TaskController extends Controller
         $this->task = $task;
     }
 
-    public function index()
+
+    // Trong TasksController.php hoặc controller tương ứng
+    public function index(Request $request)
     {
+
         $projects = Project::all();
         $tasks = $this->task->latest('id')->paginate(10);
         return view('tasks.index', compact('tasks', 'projects'));
     }
+
+
+
 
     public function create()
     {
@@ -95,4 +101,5 @@ class TaskController extends Controller
             ->orderBy($sortColumn, $sortOrder)
             ->latest('id');
     }
+
 }

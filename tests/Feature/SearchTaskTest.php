@@ -8,6 +8,7 @@ use App\Models\Task;
 use App\Models\Project;
 use App\Models\User;
 
+
 class SearchTaskTest extends TestCase
 {
     use RefreshDatabase;
@@ -78,5 +79,6 @@ class SearchTaskTest extends TestCase
         // Kiểm tra rằng các nhiệm vụ được sắp xếp theo thứ tự giảm dần
         $this->assertEquals($task2->id, $tasks[0]['id']);
         $this->assertEquals($task1->id, $tasks[1]['id']);
+
     }
 }
