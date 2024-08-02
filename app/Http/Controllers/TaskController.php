@@ -1,108 +1,86 @@
-<?php
+<?php  
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers;  
 
-use App\Http\Requests\TaskRequest;
-use App\Models\Task;
-use App\Models\Project;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use App\Services\ProjectService;
+use App\Http\Requests\TaskRequest;  
+use App\Services\TaskService;  
+use App\Services\ProjectService;  
+use Illuminate\Http\Request;  
 
-class TaskController extends Controller
-{
-    protected $task;
+class TaskController extends Controller  
+{  
+    protected $taskService;  
+    protected $projectService;  
 
-    protected $projectService;
+    public function __construct(TaskService $taskService, ProjectService $projectService)  
+    {  
+        $this->taskService = $taskService;  
+        $this->projectService = $projectService;   
+    }  
 
-    public function __construct(Task $task, ProjectService $projectService)
-    {
-        $this->task = $task;
-        $this->projectService = $projectService; 
-    }
+    public function index(Request $request)  
+    {  
+        $projects = $this->projectService->getAllProjects();  
+        $tasks = $this->taskService->getAllTasks(10);  
+        return view('tasks.index', compact('tasks', 'projects'));  
+    }  
 
+    public function create()  
+    {  
+        $projects = $this->projectService->getAllProjects();  
+        return response()->json(['projects' => $projects]);  
+    }  
 
-    // Trong TasksController.php hoặc controller tương ứng
-    public function index(Request $request)
-    {
+    public function store(TaskRequest $request)  
+    {  
+        $this->taskService->createTask($request->validated());  
+        return response()->json(['success' => true]);  
+    }  
 
-        $projects = $this->projectService->getAllProjects();
-        $tasks = $this->task->latest('id')->paginate(10);
-        return view('tasks.index', compact('tasks', 'projects'));
-    }
+    public function edit($id)  
+    {  
+        $task = $this->taskService->findTaskById($id);  
+        $projects = $this->projectService->getAllProjects();  
+        return response()->json(['task' => $task, 'projects' => $projects]);  
+    }  
 
-    public function create()
-    {
-        $projects = $this->projectService->getAllProjects();
-        return response()->json(['projects' => $projects]);
-    }
+    public function update(TaskRequest $request, $id)  
+    {  
+        $task = $this->taskService->findTaskById($id);  
+        $this->taskService->updateTask($task, $request->validated());  
+        return response()->json(['message' => 'Task updated successfully']);  
+    }  
 
-    public function store(TaskRequest $request)
-    {
-        Task::create($request->validated());
-        return response()->json(['success' => true]);
-    }
+    public function destroy($id)  
+    {  
+        try {  
+            $task = $this->taskService->findTaskById($id);  
+            $this->taskService->deleteTask($task);  
+            return response()->json(['success' => true]);  
+        } catch (\Exception $e) {  
+            \Log::error('Delete error: ' . $e->getMessage());  
+            return response()->json(['error' => 'An error occurred'], 500);  
+        }  
+    }  
 
-    public function edit(Task $task)
-    {
-        $projects = $this->projectService->getAllProjects();
-        return response()->json(['task' => $task, 'projects' => $projects]);
-    }
+    public function search(Request $request)  
+    {  
+        try {  
+            $tasks = $this->taskService->searchTasks(  
+                $request->input('query'),  
+                $request->input('project_id'),  
+                $request->input('sort_column', 'id'),  
+                $request->input('sort_order', 'desc'),  
+                10  
+            );  
 
-    public function update(TaskRequest $request, Task $task)
-    {
-        $task->update($request->validated());
-        return response()->json(['message' => 'Task updated successfully']);
-    }
-
-    public function destroy(Task $task)
-    {
-        try {
-            $task->delete();
-            return response()->json(['success' => true]);
-        } catch (\Exception $e) {
-            \Log::error('Delete error: ' . $e->getMessage());
-            return response()->json(['error' => 'An error occurred'], 500);
-        }
-    }
-
-
-    public function search(Request $request)
-    {
-        try {
-            $tasks = $this->buildTaskQuery($request)->paginate(10, ['*'], 'page', $request->input('page', 1));
-            return response()->json([
-                'data' => $tasks->items(),
-                'links' => $tasks->appends($request->all())->links()->toHtml(),
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Search error: ' . $e->getMessage());
-            return response()->json(['error' => 'An error occurred'], 500);
-        }
-    }
-
-    protected function buildTaskQuery(Request $request)
-    {
-        $allowedSortColumns = ['id', 'name', 'content'];
-        $sortColumn = in_array($request->get('sort_column', 'id'), $allowedSortColumns) ? $request->get('sort_column') : 'id';
-
-        $allowedSortOrders = ['asc', 'desc'];
-        $sortOrder = in_array(strtolower($request->get('sort_order', 'desc')), $allowedSortOrders) ? $request->get('sort_order') : 'desc';
-
-        return Task::query()
-            ->when($request->input('query'), function ($q, $query) {
-                return $q->where('name', 'like', "%{$query}%");
-            })
-            ->when($request->input('project_id'), function ($q, $projectId) {
-                return $q->where('project_id', $projectId);
-            })
-            ->with('project')
-            ->orderBy($sortColumn, $sortOrder)
-            ->latest('id');
-    }
-
-}
-
+            return response()->json([  
+                'data' => $tasks->items(),  
+                'links' => $tasks->appends($request->all())->links()->toHtml(),  
+            ]);  
+        } catch (\Exception $e) {  
+            \Log::error('Search error: ' . $e->getMessage());  
+            return response()->json(['error' => 'An error occurred'], 500);  
+        }  
+    }  
+} 
