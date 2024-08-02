@@ -14,3 +14,21 @@
     cursor: pointer;
     display: none;
 }
+.sort-icon {
+    font-size: 1em;
+    margin-left: 5px;
+    display: inline-block;
+    transition: opacity 0.3s;
+}
+
+.sort-asc .bi-sort-alpha-up {
+    color: #000;
+}
+
+.sort-desc .bi-sort-alpha-down {
+    color: #000;
+}
+
+.sort-link.active .sort-icon {
+    opacity: 1;
+}

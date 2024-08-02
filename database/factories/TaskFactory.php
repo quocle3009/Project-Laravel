@@ -3,24 +3,19 @@
 namespace Database\Factories;
 
 use App\Models\Task;
+use App\Models\Project;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Task>
- */
 class TaskFactory extends Factory
 {
     protected $model = Task::class;
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+
+    public function definition()
     {
         return [
-            'name'=>$this->faker->name(),
-            'content'=>$this->faker->text()
+            'name' => $this->faker->sentence,
+            'content' => $this->faker->paragraph,
+            'project_id' => Project::factory(),
         ];
     }
 }

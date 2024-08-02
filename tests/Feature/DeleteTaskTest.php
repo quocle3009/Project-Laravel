@@ -13,16 +13,21 @@ class DeleteTaskTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
+
     public function authenticated_user_can_delete_task()
     {
         $user = User::factory()->create();
         $this->actingAs($user);
+
         $task = Task::factory()->create();
+
         $response = $this->delete($this->getDeleteTaskRoute($task->id));
         $this->assertDatabaseMissing('tasks', ['id' => $task->id]);
-        // $response->assertRedirect($this->getListTaskRoute());
-        $response->assertRedirect('/');
+        $response->assertStatus(200);
+        // $response->assertRedirect('/tasks');
     }
+
+
 
     /** @test */
     public function unauthenticated_user_can_not_delete_task()

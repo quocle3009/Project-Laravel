@@ -20,6 +20,7 @@ class GetListTaskTest extends TestCase
     {
         // Create a user
         $user = User::factory()->create();
+        Task::factory()->create();
 
         // Simulate the user being authenticated
         $response = $this->actingAs($user)->get('/tasks');

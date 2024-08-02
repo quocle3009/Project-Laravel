@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CreateTaskRequest;
+use App\Http\Requests\TaskRequest;
 use App\Models\Task;
+use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class TaskController extends Controller
 {
@@ -15,76 +17,88 @@ class TaskController extends Controller
 
     public function __construct(Task $task)
     {
-        $this->task=$task;
+        $this->task = $task;
     }
 
 
     // Trong TasksController.php hoặc controller tương ứng
     public function index(Request $request)
     {
-        $search = $request->input('search');
 
-        $tasks = Task::when($search, function ($query) use ($search) {
-            return $query->where('name', 'like', '%' . $search . '%')
-                ->orWhere('content', 'like', '%' . $search . '%');
-        })->latest('id')->paginate(5);
-
-        return view('tasks.index', compact('tasks', 'search'));
+        $projects = Project::all();
+        $tasks = $this->task->latest('id')->paginate(10);
+        return view('tasks.index', compact('tasks', 'projects'));
     }
-
-
-    public function store(CreateTaskRequest $request)
-    {
-        $this->task->create($request->all());
-        return redirect()->route('tasks.index');
-    }
-
-
 
     public function create()
     {
-        return view('tasks.create');
+        $projects = Project::all();
+        return response()->json(['projects' => $projects]);
     }
 
+    public function store(TaskRequest $request)
+    {
+        Task::create($request->validated());
+        return response()->json(['success' => true]);
+    }
 
     public function edit(Task $task)
     {
-        return view('tasks.edit', compact('task'));
+        $projects = Project::all();
+        return response()->json(['task' => $task, 'projects' => $projects]);
     }
 
+    public function update(TaskRequest $request, Task $task)
+    {
+        $task->update($request->validated());
+        return response()->json(['message' => 'Task updated successfully']);
+    }
 
     public function destroy(Task $task)
     {
-        $task->delete();
-
-        return redirect()->route('tasks.index')->with('success', 'Task deleted successfully.');
+        try {
+            $task->delete();
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            \Log::error('Delete error: ' . $e->getMessage());
+            return response()->json(['error' => 'An error occurred'], 500);
+        }
     }
 
-    public function update(Request $request, Task $task)
-    {
-        $request->validate([
-            'name' => 'required|max:255',
-            'content' => 'nullable',
-        ]);
 
-        $task->update([
-            'name' => $request->input('name'),
-            'content' => $request->input('content'),
-        ]);
-
-        return redirect()->route('tasks.index')->with('success', 'Task updated successfully.');
-    }
     public function search(Request $request)
     {
-        $query = $request->input('query');
+        try {
+            $tasks = $this->buildTaskQuery($request)->paginate(10, ['*'], 'page', $request->input('page', 1));
+            return response()->json([
+                'data' => $tasks->items(),
+                'links' => $tasks->appends($request->all())->links()->toHtml(),
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Search error: ' . $e->getMessage());
+            return response()->json(['error' => 'An error occurred'], 500);
+        }
+    }
 
-        // Thực hiện tìm kiếm trên tất cả các trang
-        $results = Task::where('name', 'like', '%'.$query.'%')
-                       ->orWhere('content', 'like', '%'.$query.'%')
-                       ->latest('id')
-                       ->paginate(10);
+    protected function buildTaskQuery(Request $request)
+    {
+        $allowedSortColumns = ['id', 'name', 'content'];
+        $sortColumn = in_array($request->get('sort_column', 'id'), $allowedSortColumns) ? $request->get('sort_column') : 'id';
 
-        return response()->json($results);
+        $allowedSortOrders = ['asc', 'desc'];
+        $sortOrder = in_array(strtolower($request->get('sort_order', 'desc')), $allowedSortOrders) ? $request->get('sort_order') : 'desc';
+
+        return Task::query()
+            ->when($request->input('query'), function ($q, $query) {
+                return $q->where('name', 'like', "%{$query}%");
+            })
+            ->when($request->input('project_id'), function ($q, $projectId) {
+                return $q->where('project_id', $projectId);
+            })
+            ->with('project')
+            ->orderBy($sortColumn, $sortOrder)
+            ->latest('id');
     }
 
 }
+

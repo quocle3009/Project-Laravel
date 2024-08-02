@@ -13,16 +13,33 @@ class EditTaskTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function authenticated_user_can_edit_task()
-    {
-        $this->actingAs(User::factory()->create());
-        $task = Task::factory()->create();
-        $response = $this->put($this->getEditTaskRoute($task->id), $task->toArray());
+/** @test */
+/** @test */
+public function authenticated_user_can_edit_task()
+{
+    $user = User::factory()->create();
+    $this->actingAs($user);
 
-        $response->assertStatus(302);
-        $this->assertDatabaseHas('tasks', $task->toArray());
-        $response->assertRedirect(route('tasks.index'));
-    }
+    $task = Task::factory()->create();
+
+    $updatedData = [
+        'name' => 'Updated Task Name',
+        'content' => 'Update Task Content'
+    ];
+
+    $response = $this->putJson($this->getEditTaskRoute($task->id), $updatedData);
+    $response->assertStatus(200);
+    $this->assertDatabaseHas('tasks', [
+        'id' => $task->id,
+        'name' => 'Updated Task Name',
+        'content' => 'Update Task Content'
+    ]);
+    $response->assertJson([
+        'message' => 'Task updated successfully'
+    ]);
+}
+
+
 
     /** @test */
     public function unauthenticated_user_can_not_edit_task()
@@ -31,18 +48,6 @@ class EditTaskTest extends TestCase
         $response = $this->put($this->getEditTaskRoute($task->id), $task->toArray());
         $response->assertRedirect('/login');
     }
-
-    // /** @test */
-    // public function authenticated_user_can_not_edit_task_form_if_field_is_null()
-    // {
-    //     $this->actingAs(User::factory()->create());
-    //     $task = Task::factory()->create();
-
-    //     $response = $this->put($this->getEditTaskRoute($task->id), $data);
-
-    //     $response->assertViewIs('tasks.edit');
-    //     $response->assertViewHas('task', $task);
-    // }
 
     /** @test */
     public function authenticated_user_can_not_edit_task_form_if_field_is_null()
