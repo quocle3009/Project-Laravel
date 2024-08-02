@@ -21,7 +21,8 @@ class SearchTaskTest extends TestCase
         // dd($this->user); 
         $this->actingAs($this->user);
     }
-    
+
+    protected $user;    
     public function test_search_with_invalid_sort_column_defaults_to_id()
     {
         $project = Project::factory()->create();
