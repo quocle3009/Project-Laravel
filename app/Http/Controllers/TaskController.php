@@ -10,14 +10,18 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Services\ProjectService;
 
 class TaskController extends Controller
 {
     protected $task;
 
-    public function __construct(Task $task)
+    protected $projectService;
+
+    public function __construct(Task $task, ProjectService $projectService)
     {
         $this->task = $task;
+        $this->projectService = $projectService; 
     }
 
 
@@ -25,14 +29,14 @@ class TaskController extends Controller
     public function index(Request $request)
     {
 
-        $projects = Project::all();
+        $projects = $this->projectService->getAllProjects();
         $tasks = $this->task->latest('id')->paginate(10);
         return view('tasks.index', compact('tasks', 'projects'));
     }
 
     public function create()
     {
-        $projects = Project::all();
+        $projects = $this->projectService->getAllProjects();
         return response()->json(['projects' => $projects]);
     }
 
@@ -44,7 +48,7 @@ class TaskController extends Controller
 
     public function edit(Task $task)
     {
-        $projects = Project::all();
+        $projects = $this->projectService->getAllProjects();
         return response()->json(['task' => $task, 'projects' => $projects]);
     }
 
