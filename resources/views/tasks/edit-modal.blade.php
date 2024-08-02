@@ -8,23 +8,22 @@
             <div class="modal-body">
                 <form id="edit-task-form">
                     <div class="mb-3">
-                        <label for="edit-task-name" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="edit-task-name" required>
+                        <label for="edit-task-name" class="form-label">Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="edit-task-name" >
                         @error('task-name')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="mb-3">
-                        <label for="edit-task-content" class="form-label">Content</label>
-                        <textarea class="form-control" id="edit-task-content" rows="3" required></textarea>
+                        <label for="edit-task-content" class="form-label">Content <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="edit-task-content" rows="3" ></textarea>
                         @error('task-content')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="mb-3">
-                        <label for="edit-task-project" class="form-label">Project</label>
+                        <label for="edit-task-project" class="form-label">Project <span class="text-danger">*</span></label>
                         <select id="edit-task-project" class="form-control">
-                            <option value="">No Project</option>
                             @foreach ($projects as $project)
                                 <option value="{{ $project->id }}">{{ $project->name }}</option>
                             @endforeach

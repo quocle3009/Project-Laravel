@@ -7,6 +7,8 @@
                 <div class="col-md-6">
                     <button class="btn btn-primary" id="add-task-btn">Add Task</button>
                 </div>
+
+
                 <div class="col-md-6 d-flex justify-content-end align-items-center">  
                     <form id="filter-form" class="form-inline">  
                         <div class="input-group">  
@@ -59,7 +61,19 @@
                                 </a>
                             </th>
                             <th>Actions</th>
-                        </tr>
+
+    <div class="container">
+
+
+        <div class="row justify-content-center">
+            <table class="table table-striped">
+                <thead>
+                    <tr class="text-center">
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Content</th>
+                        <th>Actions</th>
+                     </tr>
                     </thead>
                     <tbody id="tasks-table-body">
                         @foreach ($tasks as $task)
@@ -73,7 +87,6 @@
                                         style="display:inline-block;margin-left: 3px"><i class="bi bi-pencil"></i></button>
                                     <button class="btn btn-danger delete-btn"
                                         data-task-id="{{ $task->id }}"><i class="bi bi-trash"></i></button>
-                                    
                                 </td>
                             </tr>
                         @endforeach
@@ -93,7 +106,6 @@
     <!-- Modal Confirm Delete -->
     @include('tasks.delete-modal')
 
-
     <!-- Modal Create Task -->
     @include('tasks.create-modal')
 
@@ -103,6 +115,4 @@
     <!-- Script tasks -->
     <script src="assets{{'/js/tasks.js'}}"></script>
 
-
- 
 @endsection

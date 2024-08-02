@@ -3,10 +3,13 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+
+
 use Tests\TestCase;
 use App\Models\Task;
 use App\Models\Project;
 use App\Models\User;
+
 
 class SearchTaskTest extends TestCase
 {
@@ -20,7 +23,9 @@ class SearchTaskTest extends TestCase
         // dd($this->user); 
         $this->actingAs($this->user);
     }
-    
+
+
+    protected $user;    
     public function test_search_with_invalid_sort_column_defaults_to_id()
     {
         $project = Project::factory()->create();
@@ -42,6 +47,7 @@ class SearchTaskTest extends TestCase
         $this->assertEquals($task2->id, $tasks[1]['id']);
         $this->assertEquals($task3->id, $tasks[0]['id']);
     }
+
 
     public function test_search_returns_filtered_tasks()
     {
@@ -78,5 +84,8 @@ class SearchTaskTest extends TestCase
         // Kiểm tra rằng các nhiệm vụ được sắp xếp theo thứ tự giảm dần
         $this->assertEquals($task2->id, $tasks[0]['id']);
         $this->assertEquals($task1->id, $tasks[1]['id']);
+
+
+
     }
 }

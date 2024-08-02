@@ -1,63 +1,45 @@
 <?php
+namespace App\Services;  
 
-namespace App\Services;
+use App\Repositories\TaskRepository;  
+use App\Models\Task;  
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Task;
+class TaskService  
+{  
+    protected $taskRepo;  
 
-class TaskService extends Controller
-{
-    protected $task;  
-
-    public function __construct(Task $task)  
+    public function __construct(TaskRepository $taskRepo)  
     {  
-        $this->task = $task;  
+        $this->taskRepo = $taskRepo;  
     }  
 
-    public function getAllTasks()  
+    public function getAllTasks($paginate = 10)  
     {  
-        return $this->task->latest('id')->paginate(10);  
+        return $this->taskRepo->all($paginate);  
     }  
 
     public function createTask(array $data)  
     {  
-        return $this->task->create($data);  
-    }  
-
-    public function getTaskById($id)  
-    {  
-        return $this->task->findOrFail($id);  
+        return $this->taskRepo->create($data);  
     }  
 
     public function updateTask(Task $task, array $data)  
     {  
-        $task->update($data);  
-        return $task;  
+        return $this->taskRepo->update($task, $data);  
     }  
 
     public function deleteTask(Task $task)  
     {  
-        $task->delete();  
+        return $this->taskRepo->delete($task);  
     }  
 
-    public function buildTaskQuery(Request $request)  
+    public function findTaskById($id)  
     {  
-        $allowedSortColumns = ['id', 'name', 'content'];  
-        $sortColumn = in_array($request->get('sort_column', 'id'), $allowedSortColumns) ? $request->get('sort_column') : 'id';  
-
-        $allowedSortOrders = ['asc', 'desc'];  
-        $sortOrder = in_array(strtolower($request->get('sort_order', 'desc')), $allowedSortOrders) ? $request->get('sort_order') : 'desc';  
-
-        return Task::query()  
-            ->when($request->input('query'), function ($q, $query) {  
-                return $q->where('name', 'like', "%{$query}%");  
-            })  
-            ->when($request->input('project_id'), function ($q, $projectId) {  
-                return $q->where('project_id', $projectId);  
-            })  
-            ->with('project')  
-            ->orderBy($sortColumn, $sortOrder)  
-            ->latest('id');  
+        return $this->taskRepo->findById($id);  
     }  
-}
+
+    public function searchTasks($query, $projectId, $sortColumn, $sortOrder, $paginate = 10)  
+    {  
+        return $this->taskRepo->search($query, $projectId, $sortColumn, $sortOrder, $paginate);  
+    }  
+}  

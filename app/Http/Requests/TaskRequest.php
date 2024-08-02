@@ -24,9 +24,14 @@ class TaskRequest extends FormRequest
         return [
             'name' => 'required|string|max:255|min:5',
             'content' => 'required|string',
-            'project_id' => 'nullable|exists:projects,id',
+            'project_id' => 'required|exists:projects,id',
+            'project_name' => [
+                'nullable',
+                'exists:projects,name',
+            ],
         ];
     }
+    
     public function messages(): array
     {
         return [
@@ -36,7 +41,10 @@ class TaskRequest extends FormRequest
             'name.min' => 'Name must be at least 5 characters.',
             'content.required' => 'Content is required.',
             'content.string' => 'Content must be a string.',
-            'project_id.exists' => 'The selected project is invalid.',
+            'project_id.required' => 'A project must be selected.',
+            'project_id.exists' => 'The selected project ID is invalid.',
+            'project_name.exists' => 'The selected project name is invalid.',
         ];
     }
+    
 }
