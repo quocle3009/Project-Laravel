@@ -24,14 +24,10 @@ class TaskController extends Controller
     // Trong TasksController.php hoặc controller tương ứng
     public function index(Request $request)
     {
-
         $projects = Project::all();
         $tasks = $this->task->latest('id')->paginate(10);
         return view('tasks.index', compact('tasks', 'projects'));
     }
-
-
-
 
     public function create()
     {
@@ -39,10 +35,10 @@ class TaskController extends Controller
         return response()->json(['projects' => $projects]);
     }
 
+
     public function store(TaskRequest $request)
     {
         Task::create($request->validated());
-
         return response()->json(['success' => true]);
     }
 
