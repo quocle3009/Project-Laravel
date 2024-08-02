@@ -4,18 +4,21 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Project;
+use App\Services\ProjectService;
 class ProjectController extends Controller
 {
 
-public function getProjects()
-{
-    try {
-        $projects = Project::all();
-        return response()->json($projects);
-    } catch (\Exception $e) {
-        \Log::error('Error fetching projects: ' . $e->getMessage());
-        return response()->json(['error' => 'An error occurred'], 500);
+    protected $projectService;
+
+    public function __construct(ProjectService $projectService)
+    {
+        $this->projectService = $projectService;
     }
-}
+
+    public function index()
+    {
+        $projects = $this->projectService->getAllProjects();
+        return response()->json(['projects' => $projects]);
+    }
 
 }
