@@ -6,23 +6,8 @@
             <div class="row mb-3">
                 <div class="col-md-6">
                     <button class="btn btn-primary" id="add-task-btn">Add Task</button>
-<<<<<<< HEAD
-=======
                 </div>
-                <div class="col-md-6 d-flex justify-content-end align-items-center">
-                    <form id="filter-form" class="form-inline">
-                        <div class="input-group">
-                            <select id="project-filter" class="form-control ml-2">
-                                <option value="">All Projects</option>
-                                @foreach ($projects as $project)
-                                    <option value="{{ $project->id }}">{{ $project->name }}</option>
-                                @endforeach
-                            </select>
-                            <input id="search-input" type="text" class="form-control" placeholder="Search tasks">
-                        </div>
-                    </form>
->>>>>>> 2a08c6f (update fillter group)
-                </div>
+
                 <div class="col-md-6 d-flex justify-content-end align-items-center">  
                     <form id="filter-form" class="form-inline">  
                         <div class="input-group">  
@@ -56,18 +41,8 @@
                             <th style="width: 15%">
                                 <a href="#" class="sort-link" data-column="name" data-order="desc">
                                     Name
-<<<<<<< HEAD
-<<<<<<< HEAD
                                     <i class="bi bi-sort-alpha-up sort-icon desc" style="display: none;"></i>
                                     <i class="bi bi-sort-alpha-down sort-icon asc" style="display: none;"></i>
-=======
-                                    <i class="bi bi-sort-alpha-up sort-icon" style="display: none;"></i>
-                                    <i class="bi bi-sort-alpha-down sort-icon" style="display: none;"></i>
->>>>>>> 2a08c6f (update fillter group)
-=======
-                                    <i class="bi bi-sort-alpha-up sort-icon desc" style="display: none;"></i>
-                                    <i class="bi bi-sort-alpha-down sort-icon asc" style="display: none;"></i>
->>>>>>> b774656 (done search and fillter)
                                 </a>
                             </th>
                             <th style="width: 60%">

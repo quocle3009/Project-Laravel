@@ -24,4 +24,3 @@ Route::get('/tasks/search', [TaskController::class, 'search'])->name('tasks.sear
 Route::get('/projects', [ProjectController::class, 'getProjects'])->name('projects.get');
 
 
-
