@@ -35,7 +35,6 @@ class TaskController extends Controller
         return response()->json(['projects' => $projects]);
     }
 
-
     public function store(TaskRequest $request)
     {
         Task::create($request->validated());

@@ -61,9 +61,6 @@
                             <th>Actions</th>
                         </tr>
                     </thead>
-
-
-
                     <tbody id="tasks-table-body">
                         @foreach ($tasks as $task)
                             <tr class="align-middle" data-task-id="{{ $task->id }}">
@@ -96,7 +93,6 @@
     <!-- Modal Confirm Delete -->
     @include('tasks.delete-modal')
 
-
     <!-- Modal Create Task -->
     @include('tasks.create-modal')
 
@@ -107,5 +103,4 @@
     <script src="assets{{'/js/tasks.js'}}"></script>
 
 
- 
 @endsection
