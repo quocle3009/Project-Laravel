@@ -57,12 +57,17 @@
                                 <a href="#" class="sort-link" data-column="name" data-order="desc">
                                     Name
 <<<<<<< HEAD
+<<<<<<< HEAD
                                     <i class="bi bi-sort-alpha-up sort-icon desc" style="display: none;"></i>
                                     <i class="bi bi-sort-alpha-down sort-icon asc" style="display: none;"></i>
 =======
                                     <i class="bi bi-sort-alpha-up sort-icon" style="display: none;"></i>
                                     <i class="bi bi-sort-alpha-down sort-icon" style="display: none;"></i>
 >>>>>>> 2a08c6f (update fillter group)
+=======
+                                    <i class="bi bi-sort-alpha-up sort-icon desc" style="display: none;"></i>
+                                    <i class="bi bi-sort-alpha-down sort-icon asc" style="display: none;"></i>
+>>>>>>> b774656 (done search and fillter)
                                 </a>
                             </th>
                             <th style="width: 60%">
@@ -82,9 +87,6 @@
                             <th>Actions</th>
                         </tr>
                     </thead>
-
-
-
                     <tbody id="tasks-table-body">
                         @foreach ($tasks as $task)
                             <tr class="align-middle" data-task-id="{{ $task->id }}">
@@ -97,7 +99,6 @@
                                         style="display:inline-block;margin-left: 3px"><i class="bi bi-pencil"></i></button>
                                     <button class="btn btn-danger delete-btn"
                                         data-task-id="{{ $task->id }}"><i class="bi bi-trash"></i></button>
-                                    
                                 </td>
                             </tr>
                         @endforeach
@@ -126,6 +127,4 @@
     <!-- Script tasks -->
     <script src="assets{{'/js/tasks.js'}}"></script>
 
-
- 
 @endsection

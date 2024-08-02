@@ -37,6 +37,7 @@ class TaskController extends Controller
 
     public function store(TaskRequest $request)
     {
+
         Task::create($request->validated());
         return response()->json(['success' => true]);
     }
@@ -49,8 +50,10 @@ class TaskController extends Controller
 
     public function update(TaskRequest $request, Task $task)
     {
+
         $task->update($request->validated());
         return response()->json(['message' => 'Task updated successfully']);
+
     }
 
     public function destroy(Task $task)
