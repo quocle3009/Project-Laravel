@@ -1,45 +1,45 @@
 <?php
 namespace App\Services;  
 
-use App\Repositories\TaskRepository;  
+use App\Repositories\taskRepository;  
 use App\Models\Task;  
 
 class TaskService  
 {  
-    protected $taskRepo;  
+    protected $taskRepository;  
 
-    public function __construct(TaskRepository $taskRepo)  
+    public function __construct(taskRepository $taskRepository)  
     {  
-        $this->taskRepo = $taskRepo;  
+        $this->taskRepository = $taskRepository;  
     }  
 
     public function getAllTasks($paginate = 10)  
     {  
-        return $this->taskRepo->all($paginate);  
+        return $this->taskRepository->all($paginate);  
     }  
 
     public function createTask(array $data)  
     {  
-        return $this->taskRepo->create($data);  
+        return $this->taskRepository->create($data);  
     }  
 
     public function updateTask(Task $task, array $data)  
     {  
-        return $this->taskRepo->update($task, $data);  
+        return $this->taskRepository->update($task, $data);  
     }  
 
     public function deleteTask(Task $task)  
     {  
-        return $this->taskRepo->delete($task);  
+        return $this->taskRepository->delete($task);  
     }  
 
     public function findTaskById($id)  
     {  
-        return $this->taskRepo->findById($id);  
+        return $this->taskRepository->findById($id);  
     }  
 
     public function searchTasks($query, $projectId, $sortColumn, $sortOrder, $paginate = 10)  
     {  
-        return $this->taskRepo->search($query, $projectId, $sortColumn, $sortOrder, $paginate);  
+        return $this->taskRepository->search($query, $projectId, $sortColumn, $sortOrder, $paginate);  
     }  
 }  
