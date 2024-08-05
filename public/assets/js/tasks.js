@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Lấy các phần tử DOM cần thiết
+    // Get the necessary DOM elements
     const searchInput = document.getElementById("search-input");
     const projectFilter = document.getElementById("project-filter");
     const tasksTableBody = document.getElementById("tasks-table-body");
@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .querySelector('meta[name="csrf-token"]')
         .getAttribute("content");
 
-    // Các biến để lưu trữ trạng thái hiện tại
+    // Variables to store the current state
     let currentPage = 1;
     let currentQuery = "";
     let currentProjectId = "";
@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let taskToDelete = null;
     let taskToEdit = null;
 
-    // Hiển thị modal tạo mới nhiệm vụ khi nhấn nút "Add Task"
+    // Show the modal to create a new task when the "Add Task" button is clicked
     document
         .getElementById("add-task-btn")
         .addEventListener("click", function () {
@@ -28,16 +28,16 @@ document.addEventListener("DOMContentLoaded", function () {
             modal.show();
         });
 
-    // Hiển thị modal chỉnh sửa hoặc xóa nhiệm vụ khi người dùng nhấn vào các nút tương ứng
+    // Show the modal to edit or delete a task when the corresponding buttons are clicked
     document.addEventListener("click", function (event) {
-        // Nếu người dùng nhấn nút "Edit"
+        // If the user clicks the "Edit" button
         if (event.target && event.target.classList.contains("edit-btn")) {
             const taskId = event.target.dataset.taskId;
             fetch(`/tasks/${taskId}/edit`)
                 .then((response) => response.json())
                 .then((data) => {
                     const task = data.task;
-                    // Điền dữ liệu của nhiệm vụ vào modal chỉnh sửa
+                    // Populate the edit modal with task data
                     document.getElementById("edit-task-name").value = task.name;
                     document.getElementById("edit-task-content").value =
                         task.content;
@@ -55,14 +55,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
         }
 
-        // Nếu người dùng nhấn nút "Delete"
+        // If the user clicks the "Delete" button
         if (event.target && event.target.classList.contains("delete-btn")) {
             const taskId = event.target.dataset.taskId;
             taskToDelete = taskId;
             const taskName = event.target
                 .closest("tr")
                 .querySelector("td:nth-child(2)").textContent;
-            // Hiển thị modal xác nhận xóa với thông tin nhiệm vụ cần xóa
+            // Show the delete confirmation modal with the task information
             const modalTitle = document.querySelector(
                 "#deleteConfirmModalLabel"
             );
@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Xác nhận xóa nhiệm vụ sau khi nhấn nút "Confirm Delete"
+    // Confirm task deletion after clicking the "Confirm Delete" button
     document
         .getElementById("confirm-delete-btn")
         .addEventListener("click", function () {
@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 })
                     .then((response) => response.json())
                     .then(() => {
-                        // Xóa dòng nhiệm vụ khỏi bảng và cập nhật bảng sau khi xóa thành công
+                        // Remove the task row from the table and update the table after successful deletion
                         document
                             .querySelector(`tr[data-task-id="${taskToDelete}"]`)
                             .remove();
@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     })
                     .finally(() => {
                         taskToDelete = null;
-                        // Ẩn modal xác nhận xóa
+                        // Hide the delete confirmation modal
                         const modal = bootstrap.Modal.getInstance(
                             document.getElementById("deleteConfirmModal")
                         );
@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
 
-    // Hàm cập nhật bảng nhiệm vụ dựa trên các tham số tìm kiếm, phân trang và sắp xếp
+    // Function to update the task table based on search, pagination, and sorting parameters
     function updateTable(
         query,
         projectId,
@@ -143,13 +143,16 @@ document.addEventListener("DOMContentLoaded", function () {
         fetch(url.toString(), {
             headers: {
                 "X-Requested-With": "XMLHttpRequest",
+                "X-CSRF-TOKEN": csrfToken,
+                "Content-Type": "application/json",
             },
+            
         })
             .then((response) => response.json())
             .then((data) => {
-                tasksTableBody.innerHTML = ""; // Xóa các dòng hiện tại trong bảng
+                tasksTableBody.innerHTML = ""; // Clear current table rows
                 if (data.data && Array.isArray(data.data)) {
-                    // Thêm các dòng nhiệm vụ mới vào bảng
+                    // Add new task rows to the table
                     data.data.forEach((task) => {
                         const row = document.createElement("tr");
                         row.dataset.taskId = task.id;
@@ -171,7 +174,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     });
                 }
 
-                // Cập nhật các liên kết phân trang
+                // Update pagination links
                 if (data.links) {
                     paginationLinks.innerHTML = data.links;
 
@@ -193,7 +196,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     paginationLinks.innerHTML = "";
                 }
 
-                // Cập nhật các liên kết sắp xếp dựa trên cột hiện tại
+                // Update sorting links based on the current column
                 sortLinks.forEach((link) => {
                     const column = link.dataset.column;
                     const order = link.dataset.order;
@@ -222,7 +225,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
 
-    // Xử lý sự kiện nhấn vào liên kết sắp xếp
+    // Handle sorting link click events
     sortLinks.forEach((link) => {
         link.addEventListener("click", function (event) {
             event.preventDefault();
@@ -238,7 +241,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // Xử lý sự kiện tìm kiếm
+    // Handle search input events
     searchInput.addEventListener("input", function () {
         updateTable(
             searchInput.value,
@@ -249,7 +252,7 @@ document.addEventListener("DOMContentLoaded", function () {
         );
     });
 
-    // Xử lý sự kiện thay đổi bộ lọc dự án
+    // Handle project filter change events
     projectFilter.addEventListener("change", function () {
         updateTable(
             searchInput.value,
@@ -260,7 +263,7 @@ document.addEventListener("DOMContentLoaded", function () {
         );
     });
 
-    // Khởi tạo bảng với dữ liệu mặc định khi trang được tải lần đầu
+    // Initialize the table with default data when the page first loads
     updateTable(
         currentQuery,
         currentProjectId,
@@ -269,7 +272,7 @@ document.addEventListener("DOMContentLoaded", function () {
         sortOrder
     );
 
-    // Xử lý sự kiện submit form tạo nhiệm vụ mới
+    // Handle form submission for creating a new task
     document
         .getElementById("create-task-form")
         .addEventListener("submit", function (event) {
@@ -306,7 +309,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         document.getElementById("createTaskModal")
                     );
                     modal.hide();
-                    // Tải lại trang sau khi tạo nhiệm vụ thành công
+                    // Reload the page after successfully creating the task
                     window.location.reload();
                 })
                 .catch((errors) => {
@@ -314,7 +317,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
         });
 
-    // Xử lý sự kiện submit form chỉnh sửa nhiệm vụ
+    // Handle form submission for editing a task
     document
         .getElementById("edit-task-form")
         .addEventListener("submit", function (event) {
@@ -366,7 +369,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
         });
 
-    // Hàm hiển thị lỗi khi có lỗi xảy ra
+    // Function to display errors when they occur
     function displayErrors(errors, type) {
         let errorMessages = "";
 
@@ -378,7 +381,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
-        // Chọn phần body của modal để hiển thị thông báo lỗi
+        // Select the modal body to display the error messages
         const modalBody =
             type === "create"
                 ? document.querySelector("#createTaskModal .modal-body")
@@ -388,15 +391,16 @@ document.addEventListener("DOMContentLoaded", function () {
         errorContainer.innerHTML = errorMessages;
         modalBody.insertBefore(errorContainer, modalBody.firstChild);
     }
-    // Hàm hiển thị lỗi khi có lỗi xảy ra
+
+    // Function to display errors when they occur
     function displayErrors(errors, type) {
-        // Xóa các lỗi cũ trước khi hiển thị lỗi mới
+        // Remove old errors before displaying new ones
         const modalBody =
             type === "create"
                 ? document.querySelector("#createTaskModal .modal-body")
                 : document.querySelector("#editTaskModal .modal-body");
 
-        // Xóa các thông báo lỗi cũ
+        // Remove old error messages
         const oldErrorMessages = modalBody.querySelectorAll(".text-danger");
         oldErrorMessages.forEach((error) => error.remove());
 
@@ -410,7 +414,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
-        // Tạo một phần tử chứa thông báo lỗi mới và thêm vào modal body
+        // Create a new container for the error messages and add it to the modal body
         const errorContainer = document.createElement("div");
         errorContainer.innerHTML = errorMessages;
         modalBody.insertBefore(errorContainer, modalBody.firstChild);
